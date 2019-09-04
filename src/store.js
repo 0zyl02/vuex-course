@@ -31,10 +31,38 @@ export default new Vuex.Store({
     getTodosById: state => id => state.todos.find(todo => todo.id == id)
   },
   mutations: {
-    incremnetCount: state => state.count++,
-    decrementCount: (state, payload) => state.count -= payload.amount
+    incrementCount: state => state.count++,
+    decrementCount: (state, payload) => state.count -= payload.amount,
+    setTodos: (state, todos) => state.todos = todos
   },
+  // 异步请求
   actions: {
-
+    incrementCountAsync: ({ commit }) => {
+      setTimeout(() => {
+        /* 解构
+        const object={
+        name:"米斯特吴"，
+        age:20
+        }
+        
+        const{name,age}=object
+        */
+        //  context/*=this.$store*/.
+        commit("incrementCount")
+      }, 2000);
+    },
+    decrementCountAsync: (context, payload) => {
+      setTimeout(() => {
+        context/*=this.$store*/.commit("decrementCount", payload)
+      }, 1000);
+    },
+    //es9的语法
+    async fetchDataAsync(context) {
+      // await在异步函数中使用，主要修饰请求的东西，如果这行数据没有请求结束，下一行不运行，解决异步出现混乱的情况
+      // 完美异步  async await
+      const response = await axios.get("http://jsonplaceholder.typicode.com/todos")
+      // console.log(response);
+      context.commit("setTodos", response.data)
+    }
   }
 })
